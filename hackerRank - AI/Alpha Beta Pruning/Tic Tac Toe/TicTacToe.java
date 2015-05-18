@@ -195,34 +195,24 @@ class Player
 		}
  	}
 
-	/** The heuristic evaluation function for the current board
-    @Return +100, +10, +1 for EACH 3-, 2-, 1-in-a-line for computer.
-            -100, -10, -1 for EACH 3-, 2-, 1-in-a-line for opponent.
-            0 otherwise   */
 	public int evaluate()
 	{
 		int score = 0;
-      // Evaluate score for each of the 8 lines (3 rows, 3 columns, 2 diagonals)
-      score += evaluateLine(0, 0, 0, 1, 0, 2);  // row 0
-      score += evaluateLine(1, 0, 1, 1, 1, 2);  // row 1
-      score += evaluateLine(2, 0, 2, 1, 2, 2);  // row 2
-      score += evaluateLine(0, 0, 1, 0, 2, 0);  // col 0
-      score += evaluateLine(0, 1, 1, 1, 2, 1);  // col 1
-      score += evaluateLine(0, 2, 1, 2, 2, 2);  // col 2
-      score += evaluateLine(0, 0, 1, 1, 2, 2);  // diagonal
-      score += evaluateLine(0, 2, 1, 1, 2, 0);  // alternate diagonal
+      score += evaluateRow(0, 0, 0, 1, 0, 2);
+      score += evaluateRow(1, 0, 1, 1, 1, 2);
+      score += evaluateRow(2, 0, 2, 1, 2, 2);
+      score += evaluateRow(0, 0, 1, 0, 2, 0);
+      score += evaluateRow(0, 1, 1, 1, 2, 1);
+      score += evaluateRow(0, 2, 1, 2, 2, 2);
+      score += evaluateRow(0, 0, 1, 1, 2, 2);
+      score += evaluateRow(0, 2, 1, 1, 2, 0);
       return score;
 	}
 
-	/** The heuristic evaluation function for the given line of 3 cells
-    @Return +100, +10, +1 for 3-, 2-, 1-in-a-line for computer.
-            -100, -10, -1 for 3-, 2-, 1-in-a-line for opponent.
-            0 otherwise */
-	public int evaluateLine(int row1, int col1, int row2, int col2, int row3, int col3)
+	public int evaluateRow(int row1, int col1, int row2, int col2, int row3, int col3)
 	{
 		int score = 0;
 
-		// First cell
 		if (board[row1][col1] == myPlayer)
 		{
 			score = 1;
@@ -232,64 +222,62 @@ class Player
 			score = -1;
 		}
 
-		// Second cell
 		if (board[row2][col2] == myPlayer)
 		{
 			if (score == 1)
-			{   // cell1 is mySeed
+			{
 				score = 10;
 			} else if (score == -1)
-			{  // cell1 is oppSeed
+			{
 				return 0;
 			} else
-			{  // cell1 is empty
+			{
 				score = 1;
 			}
 		}
 		else if (board[row2][col2] == oppPlayer)
 		{
 			if (score == -1)
-			{ // cell1 is oppSeed
+			{
 				score = -10;
 			}
 			else if (score == 1)
-			{ // cell1 is mySeed
+			{
 				return 0;
 			}
 			else
-			{  // cell1 is empty
+			{
 				score = -1;
 			}
 		}
 
-		// Third cell
 		if (board[row3][col3] == myPlayer)
 		{
 			if (score > 0)
-			{  // cell1 and/or cell2 is mySeed
+			{
 				score *= 10;
 			}
 			else if (score < 0)
-			{  // cell1 and/or cell2 is oppSeed
+			{
 				return 0;
 			}
 			else
-			{  // cell1 and cell2 are empty
+			{
 				score = 1;
 			}
 		}
 		else if (board[row3][col3] == oppPlayer)
 		{
 			if (score < 0)
-			{  // cell1 and/or cell2 is oppSeed
+			{
 				score *= 10;
 			}
 			else if (score > 1)
-			{  // cell1 and/or cell2 is mySeed
+			{
 				return 0;
 			}
 			else
-			{  // cell1 and cell2 are empty
+			{
 				score = -1;
 			}
 		}
