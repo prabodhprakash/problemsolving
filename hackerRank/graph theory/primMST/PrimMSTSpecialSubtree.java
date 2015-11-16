@@ -1,7 +1,7 @@
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class PrimMSTSpecialSubtree 
@@ -50,7 +50,7 @@ public class PrimMSTSpecialSubtree
 		Node startNode = nodesArray[startNodeIndex];
 		
 		PrimMST primMST = new PrimMST();
-		System.out.println(primMST.computeMST(startNode));
+		System.out.println(primMST.computeMST(startNode, this.edgeComparator));
 		
 		in.close();
 	}
@@ -60,28 +60,17 @@ public class PrimMSTSpecialSubtree
 		return Integer.parseInt(s);
 	}
 	
-	class Node implements Comparable <Node>
+	class Node
 	{
 		public int index;
 		public List<Edge> adjacencyList;
 		public boolean hasBeenVisited;
-		public int distanceFromRoot;
-		public Node previousNode;
-		public int contributionToMST;
 		
 		public Node(int index)
 		{
 			this.index = index;
 			this.adjacencyList = new LinkedList<Edge>();
 			hasBeenVisited = false;
-			distanceFromRoot = Integer.MAX_VALUE;
-			contributionToMST = 0;
-		}
-		
-		@Override
-		public int compareTo(Node otherNode)
-		{
-			return Double.compare(this.distanceFromRoot, otherNode.distanceFromRoot);
 		}
 	}
 	
@@ -97,26 +86,31 @@ public class PrimMSTSpecialSubtree
 		}
 	}
 	
-	class PrimMST
+	public Comparator<Edge> edgeComparator = new Comparator<Edge>() 
 	{
-		public int computeMST(Node startNode)
+        @Override
+        public int compare(Edge edge1, Edge edge2) 
+        {
+        	return Integer.compare(edge1.weight, edge2.weight);
+        }
+    };
+	
+	class PrimMST
+	{   
+		public long computeMST(Node startNode, Comparator<Edge> comparator)
 		{
 			int minDistance = 0;
 			
-			startNode.distanceFromRoot = 0;
+			PriorityQueue<Edge> queue = new PriorityQueue<Edge>(50, comparator);
 			
-			Queue<Double> queue = new PriorityQueue<Double>();
-			
-			queue.add((double) (startNode.distanceFromRoot * 10000000 + startNode.index));
+			startNode.hasBeenVisited = true;
+			queue.addAll(startNode.adjacencyList);
 			
 			while (!queue.isEmpty())
 			{
-				double value = queue.remove();
+				Edge currentEdge = queue.remove();
 				
-				int index = (int)(value % 10000000);
-			    int distance = (int)(value / 10000000);
-			    
-			    Node currentNode = nodesArray[index];
+				Node currentNode = currentEdge.node;
 				
 				if (currentNode.hasBeenVisited)
 				{
@@ -124,28 +118,16 @@ public class PrimMSTSpecialSubtree
 				}
 				
 				currentNode.hasBeenVisited = true;
-				//System.out.println(currentNode.index + " " + currentNode.contributionToMST);
-				minDistance += currentNode.contributionToMST;
+				
+				minDistance += currentEdge.weight;
 				
 				for (Edge e: currentNode.adjacencyList)
 				{
-					Node node = e.node;
-					int weight = e.weight;
-					
-					int newWeight = weight - distance;
-
-			        if (newWeight < 0) newWeight = 0;
-			        
-					int distanceThroughCurrentNode = newWeight + distance;
-					
-					if (distanceThroughCurrentNode < node.distanceFromRoot)
+					if (!e.node.hasBeenVisited)
 					{
-						node.distanceFromRoot = distanceThroughCurrentNode;
-						node.previousNode = currentNode;
-						node.contributionToMST = weight;
-						
-						queue.add((double)distanceThroughCurrentNode * 10000000 + node.index);;
+						queue.add(e);
 					}
+						
 				}
 			}
 			
