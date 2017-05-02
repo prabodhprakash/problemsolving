@@ -1,3 +1,5 @@
+//solved with help from : http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+
 #include <iostream>
 #include <stack>
 #include <string>
