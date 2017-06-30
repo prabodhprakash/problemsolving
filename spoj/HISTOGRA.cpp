@@ -20,6 +20,7 @@ void findMaxArea(long long int histogram[], long int size)
 	{
 		if (barStack.empty() || histogram[barStack.top()] <= histogram[i])
 		{
+			cout << "pushing index: " << i << "  with value: " << histogram[i] << endl;
 			barStack.push(i++);
 		}
 		else
@@ -27,12 +28,18 @@ void findMaxArea(long long int histogram[], long int size)
 			top = barStack.top();
 			barStack.pop();
 
+			cout << "popping index: " << top << "  with value: " << histogram[top] << endl;
+
 			currentArea = histogram[top]* (barStack.empty() ? i : i - barStack.top() -1);
+
+			cout << "current area is: " << currentArea << endl;
 			
 			if (maximumArea < currentArea)
 			{
 				maximumArea = currentArea;
 			}
+
+			cout << "maximumArea area is: " << maximumArea << endl;
 		}
 	}
 
@@ -41,12 +48,18 @@ void findMaxArea(long long int histogram[], long int size)
 		top = barStack.top();
 		barStack.pop();
 
+		cout << "popping index: " << top << "  with value: " << histogram[top] << endl;
+
 		currentArea = histogram[top]* (barStack.empty() ? i : i - barStack.top() -1);
+
+		cout << "current area is: " << currentArea << endl;
 
 		if (maximumArea < currentArea)
 		{
 			maximumArea = currentArea;
 		}
+
+		cout << "maximumArea area is: " << maximumArea << endl;
 	}
 
 	cout << maximumArea << endl;
