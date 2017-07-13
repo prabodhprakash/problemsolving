@@ -5,6 +5,6 @@ for i in range(0, noInputs):
     a = int(inputValue[0][::-1])
     b = int(inputValue[1][::-1])
 
-    c = str(a + b)[::-1].rstrip("0")
+    c = str(a + b)[::-1].lstrip("0")
     print(c)
 
